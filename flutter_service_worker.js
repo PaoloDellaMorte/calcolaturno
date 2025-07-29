@@ -1,0 +1,1 @@
+// Simulated content for flutter_service_worker.js
