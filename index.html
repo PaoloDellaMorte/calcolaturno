@@ -1,1 +1,187 @@
-// Simulated content for index.html
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore Turni</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Colore della barra di stato su mobile -->
+    <meta name="theme-color" content="#4f46e5">
+
+    <!-- Icone per iOS -->
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; filter: invert(0.5) sepia(1) saturate(1) hue-rotate(200deg); }
+        .card { background-color: white; border-radius: 0.75rem; padding: 2rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .result-box { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
+        .result-box.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-2xl">
+        <div class="card">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">Calcolatore Turni di Lavoro</h1>
+                <p class="text-gray-500 mt-2">Inserisci i dati per calcolare il turno in una data specifica.</p>
+            </div>
+
+            <form id="shift-form" class="space-y-6">
+                <!-- Sezione 1: Dati di Riferimento -->
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">1. Dati di Riferimento</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="ref-date" class="block text-sm font-medium text-gray-600 mb-1">Data di Riferimento</label>
+                            <input type="date" id="ref-date" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="ref-track" class="block text-sm font-medium text-gray-600 mb-1">Pista di Riferimento</label>
+                            <select id="ref-track" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option><option value="4">E</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="ref-shift" class="block text-sm font-medium text-gray-600 mb-1">Turno di Riferimento</label>
+                            <input type="text" id="ref-shift" placeholder="Es. M" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 uppercase">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sezione 2: Sequenza Turni -->
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">2. Sequenza Turni</h2>
+                    <div>
+                        <label for="shift-sequence" class="block text-sm font-medium text-gray-600 mb-1">Scegli la sequenza dei turni</label>
+                        <select id="shift-sequence" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="P,M,N,SN,R">P,M,N,SN,R</option><option value="M,P,N,SN,R">M,P,N,SN,R</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sezione 3: Dati da Calcolare -->
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">3. Calcola Turno</h2>
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="target-date" class="block text-sm font-medium text-gray-600 mb-1">Data da Calcolare</label>
+                            <input type="date" id="target-date" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="target-track" class="block text-sm font-medium text-gray-600 mb-1">Pista da Calcolare</label>
+                            <select id="target-track" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option><option value="4">E</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottone di Calcolo -->
+                <div class="pt-4 text-center">
+                    <button type="submit" class="w-full md:w-auto bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105">
+                        Calcola Turno
+                    </button>
+                </div>
+            </form>
+
+            <!-- Sezione Risultato -->
+            <div id="result-container" class="mt-8 pt-6 border-t border-gray-200 text-center result-box"></div>
+        </div>
+    </div>
+
+    <script>
+        // Registrazione del Service Worker per la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registrato con successo:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Registrazione Service Worker fallita:', error);
+                    });
+            });
+        }
+
+        // Funzione per impostare la data odierna nei campi data
+        function setDefaultDates() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const todayString = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('ref-date').value = todayString;
+            document.getElementById('target-date').value = todayString;
+        }
+
+        // Funzione per calcolare il modulo positivo
+        function positiveModulo(a, n) {
+            return ((a % n) + n) % n;
+        }
+
+        // Funzione principale per il calcolo
+        function calculateShift(event) {
+            event.preventDefault();
+            const resultContainer = document.getElementById('result-container');
+            resultContainer.innerHTML = '';
+            resultContainer.classList.remove('visible');
+
+            const refDateStr = document.getElementById('ref-date').value;
+            const refTrackIndex = parseInt(document.getElementById('ref-track').value);
+            const refShift = document.getElementById('ref-shift').value.trim().toUpperCase();
+            const sequenceStr = document.getElementById('shift-sequence').value.trim().toUpperCase();
+            const targetDateStr = document.getElementById('target-date').value;
+            const targetTrackIndex = parseInt(document.getElementById('target-track').value);
+
+            if (!refDateStr || !refShift || !sequenceStr || !targetDateStr) {
+                resultContainer.innerHTML = `<p class="text-red-600 font-semibold">Errore: Compila tutti i campi richiesti.</p>`;
+                resultContainer.classList.add('visible');
+                return;
+            }
+
+            const sequenceArray = sequenceStr.split(',').map(s => s.trim());
+            const refShiftIndex = sequenceArray.indexOf(refShift);
+            if (refShiftIndex === -1) {
+                resultContainer.innerHTML = `<p class="text-red-600 font-semibold">Errore: Il turno di riferimento "${refShift}" non è presente nella sequenza.</p>`;
+                resultContainer.classList.add('visible');
+                return;
+            }
+
+            try {
+                const refDate = new Date(refDateStr + 'T00:00:00Z');
+                const targetDate = new Date(targetDateStr + 'T00:00:00Z');
+                const ONE_DAY_MS = 1000 * 60 * 60 * 24;
+                const dateDiff = Math.round((targetDate.getTime() - refDate.getTime()) / ONE_DAY_MS);
+                const trackDiff = targetTrackIndex - refTrackIndex;
+                const sequenceLength = sequenceArray.length;
+                const targetShiftIndex = positiveModulo(refShiftIndex + dateDiff - trackDiff, sequenceLength);
+                const targetShift = sequenceArray[targetShiftIndex];
+                const targetDateFormatted = targetDate.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+                const targetTrackLetter = document.querySelector(`#target-track option[value='${targetTrackIndex}']`).textContent;
+
+                resultContainer.innerHTML = `
+                    <p class="text-gray-600">Il giorno ${targetDateFormatted}, la pista <span class="font-bold text-indigo-600">${targetTrackLetter}</span> farà il turno:</p>
+                    <p class="text-4xl font-bold text-indigo-600 mt-2 tracking-wider">${targetShift}</p>
+                `;
+                resultContainer.classList.add('visible');
+            } catch (error) {
+                resultContainer.innerHTML = `<p class="text-red-600 font-semibold">Si è verificato un errore nel calcolo.</p>`;
+                resultContainer.classList.add('visible');
+                console.error("Shift calculation error:", error);
+            }
+        }
+
+        document.getElementById('shift-form').addEventListener('submit', calculateShift);
+        window.onload = setDefaultDates;
+    </script>
