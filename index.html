@@ -30,59 +30,50 @@
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-2xl">
+    <div class="w-full max-w-xl">
         <div class="card">
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-bold text-gray-800">Calcolatore Turni di Lavoro</h1>
-                <p class="text-gray-500 mt-2">Inserisci i dati per calcolare il turno in una data specifica.</p>
+                <p class="text-gray-500 mt-2">Calcola il turno per una data specifica.</p>
             </div>
 
             <form id="shift-form" class="space-y-6">
                 <!-- Sezione 1: Dati di Riferimento -->
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">1. Dati di Riferimento</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">1. Imposta Riferimento</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                         <div>
-                            <label for="ref-date" class="block text-sm font-medium text-gray-600 mb-1">Data di Riferimento</label>
+                            <label for="ref-date" class="block text-sm font-medium text-gray-600 mb-1">Data Riferimento</label>
                             <input type="date" id="ref-date" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         <div>
-                            <label for="ref-track" class="block text-sm font-medium text-gray-600 mb-1">Pista di Riferimento</label>
-                            <select id="ref-track" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <label for="track" class="block text-sm font-medium text-gray-600 mb-1">Pista</label>
+                            <select id="track" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                                 <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option><option value="4">E</option>
                             </select>
                         </div>
-                        <div>
-                            <label for="ref-shift" class="block text-sm font-medium text-gray-600 mb-1">Turno di Riferimento</label>
-                            <input type="text" id="ref-shift" placeholder="Es. M" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 uppercase">
+                         <div>
+                            <label for="shift-sequence" class="block text-sm font-medium text-gray-600 mb-1">Sequenza</label>
+                            <select id="shift-sequence" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="P,M,N,SN,R">P,M,N,SN,R</option><option value="M,P,N,SN,R">M,P,N,SN,R</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-3">
+                            <label for="ref-shift" class="block text-sm font-medium text-gray-600 mb-1">Turno in quella data</label>
+                            <select id="ref-shift" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <!-- Opzioni popolate da JS -->
+                            </select>
                         </div>
                     </div>
                 </div>
 
-                <!-- Sezione 2: Sequenza Turni -->
+                <!-- Sezione 2: Dati da Calcolare -->
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">2. Sequenza Turni</h2>
-                    <div>
-                        <label for="shift-sequence" class="block text-sm font-medium text-gray-600 mb-1">Scegli la sequenza dei turni</label>
-                        <select id="shift-sequence" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="P,M,N,SN,R">P,M,N,SN,R</option><option value="M,P,N,SN,R">M,P,N,SN,R</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Sezione 3: Dati da Calcolare -->
-                <div>
-                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">3. Calcola Turno</h2>
-                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">2. Calcola Turno</h2>
+                     <div class="grid grid-cols-1">
                         <div>
                             <label for="target-date" class="block text-sm font-medium text-gray-600 mb-1">Data da Calcolare</label>
                             <input type="date" id="target-date" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label for="target-track" class="block text-sm font-medium text-gray-600 mb-1">Pista da Calcolare</label>
-                            <select id="target-track" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option><option value="4">E</option>
-                            </select>
                         </div>
                     </div>
                 </div>
@@ -105,12 +96,28 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => {
-                        console.log('Service Worker registrato con successo:', registration);
-                    })
-                    .catch(error => {
-                        console.log('Registrazione Service Worker fallita:', error);
-                    });
+                    .then(registration => console.log('Service Worker registrato con successo.'))
+                    .catch(error => console.log('Registrazione Service Worker fallita:', error));
+            });
+        }
+        
+        const sequenceSelect = document.getElementById('shift-sequence');
+        const refShiftSelect = document.getElementById('ref-shift');
+
+        // Funzione per popolare il dropdown dei turni di riferimento
+        function populateReferenceShifts() {
+            const sequenceStr = sequenceSelect.value;
+            const sequenceArray = sequenceStr.split(',').map(s => s.trim());
+            
+            // Pulisce le opzioni precedenti
+            refShiftSelect.innerHTML = '';
+
+            // Aggiunge le nuove opzioni
+            sequenceArray.forEach(shift => {
+                const option = document.createElement('option');
+                option.value = shift;
+                option.textContent = shift;
+                refShiftSelect.appendChild(option);
             });
         }
 
@@ -138,12 +145,11 @@
             resultContainer.classList.remove('visible');
 
             const refDateStr = document.getElementById('ref-date').value;
-            const refTrackIndex = parseInt(document.getElementById('ref-track').value);
-            const refShift = document.getElementById('ref-shift').value.trim().toUpperCase();
-            const sequenceStr = document.getElementById('shift-sequence').value.trim().toUpperCase();
+            const trackIndex = parseInt(document.getElementById('track').value);
+            const refShift = document.getElementById('ref-shift').value;
+            const sequenceStr = document.getElementById('shift-sequence').value;
             const targetDateStr = document.getElementById('target-date').value;
-            const targetTrackIndex = parseInt(document.getElementById('target-track').value);
-
+            
             if (!refDateStr || !refShift || !sequenceStr || !targetDateStr) {
                 resultContainer.innerHTML = `<p class="text-red-600 font-semibold">Errore: Compila tutti i campi richiesti.</p>`;
                 resultContainer.classList.add('visible');
@@ -152,26 +158,24 @@
 
             const sequenceArray = sequenceStr.split(',').map(s => s.trim());
             const refShiftIndex = sequenceArray.indexOf(refShift);
-            if (refShiftIndex === -1) {
-                resultContainer.innerHTML = `<p class="text-red-600 font-semibold">Errore: Il turno di riferimento "${refShift}" non è presente nella sequenza.</p>`;
-                resultContainer.classList.add('visible');
-                return;
-            }
 
             try {
                 const refDate = new Date(refDateStr + 'T00:00:00Z');
                 const targetDate = new Date(targetDateStr + 'T00:00:00Z');
                 const ONE_DAY_MS = 1000 * 60 * 60 * 24;
                 const dateDiff = Math.round((targetDate.getTime() - refDate.getTime()) / ONE_DAY_MS);
-                const trackDiff = targetTrackIndex - refTrackIndex;
+                
+                // La differenza di pista è sempre 0 in questa versione semplificata.
+                // La formula si semplifica.
                 const sequenceLength = sequenceArray.length;
-                const targetShiftIndex = positiveModulo(refShiftIndex + dateDiff - trackDiff, sequenceLength);
+                const targetShiftIndex = positiveModulo(refShiftIndex + dateDiff, sequenceLength);
                 const targetShift = sequenceArray[targetShiftIndex];
+                
                 const targetDateFormatted = targetDate.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
-                const targetTrackLetter = document.querySelector(`#target-track option[value='${targetTrackIndex}']`).textContent;
+                const trackLetter = document.querySelector(`#track option[value='${trackIndex}']`).textContent;
 
                 resultContainer.innerHTML = `
-                    <p class="text-gray-600">Il giorno ${targetDateFormatted}, la pista <span class="font-bold text-indigo-600">${targetTrackLetter}</span> farà il turno:</p>
+                    <p class="text-gray-600">Il giorno ${targetDateFormatted}, la pista <span class="font-bold text-indigo-600">${trackLetter}</span> farà il turno:</p>
                     <p class="text-4xl font-bold text-indigo-600 mt-2 tracking-wider">${targetShift}</p>
                 `;
                 resultContainer.classList.add('visible');
@@ -181,7 +185,17 @@
                 console.error("Shift calculation error:", error);
             }
         }
-
+        
+        // Aggiunge l'event listener al form
         document.getElementById('shift-form').addEventListener('submit', calculateShift);
-        window.onload = setDefaultDates;
+        // Aggiunge l'event listener per aggiornare i turni quando la sequenza cambia
+        sequenceSelect.addEventListener('change', populateReferenceShifts);
+
+        // Al caricamento della pagina, imposta le date e popola i turni per la prima volta
+        window.onload = () => {
+            setDefaultDates();
+            populateReferenceShifts();
+        };
     </script>
+</body>
+</html>
